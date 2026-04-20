@@ -1,0 +1,22 @@
+[project]
+name = "scan-input"
+version = "0.1.0"
+description = "Desktop OCR application for scanned PDFs and images"
+requires-python = ">=3.13"
+dependencies = [
+    "PyQt6>=6.6",
+    "pytesseract>=0.3.10",
+    "pdf2image>=1.17",
+    "Pillow>=10.0",
+    "numpy>=1.26",
+    "paddleocr>=3.0",
+    "paddlepaddle>=3.0",
+    "easyocr>=1.7.2",
+    "rapidocr>=3.8.1",
+    "onnxruntime>=1.24.4",
+    "vietocr>=0.3.12",
+    "underthesea>=9.4.0",
+    "openpyxl>=3.1.5",
+    "pdfplumber>=0.11.9",
+    "python-docx>=1.2.0",
+]

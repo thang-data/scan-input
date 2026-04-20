@@ -1,0 +1,79 @@
+name: Build Windows EXE
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements_windows.txt
+
+      - name: Install Tesseract OCR
+        run: |
+          choco install tesseract --no-progress -y
+          # Download Vietnamese language data (best quality)
+          Invoke-WebRequest -Uri "https://github.com/tesseract-ocr/tessdata_best/raw/main/vie.traineddata" -OutFile "C:\Program Files\Tesseract-OCR\tessdata\vie.traineddata"
+
+      - name: Install Poppler
+        run: |
+          choco install poppler --no-progress -y
+
+      - name: Fix VietOCR Pillow compatibility
+        run: |
+          $file = Get-ChildItem -Path "$env:pythonLocation\Lib\site-packages\vietocr\tool\translate.py" -ErrorAction SilentlyContinue
+          if ($file) {
+            (Get-Content $file.FullName) -replace 'Image\.ANTIALIAS', 'Image.LANCZOS' | Set-Content $file.FullName
+          }
+
+      - name: Build with PyInstaller
+        env:
+          TESSERACT_DIR: "C:\\Program Files\\Tesseract-OCR"
+          POPPLER_DIR: "C:\\ProgramData\\chocolatey\\lib\\poppler\\tools\\Library\\bin"
+        run: |
+          pyinstaller scan_input.spec --distpath dist --workpath build --clean -y
+
+      - name: Create portable ZIP
+        run: |
+          Compress-Archive -Path "dist\ScanInput\*" -DestinationPath "dist\ScanInput_Windows_v${{ github.ref_name }}.zip"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ScanInput-Windows
+          path: dist/ScanInput_Windows_*.zip
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/ScanInput_Windows_*.zip
+          body: |
+            ## Scan Input - OCR Tiếng Việt v${{ github.ref_name }}
+
+            ### Cài đặt
+            1. Tải file `.zip` bên dưới
+            2. Giải nén vào thư mục bất kỳ
+            3. Chạy `ScanInput.exe`
+
+            ### Tính năng
+            - OCR tiếng Việt (VietOCR + Tesseract)
+            - Đọc PDF scan + ảnh
+            - Xuất Text / Word (.docx)
+            - Template extraction + Excel export
+
+            Tesseract, Poppler, và Vietnamese language data đã được tích hợp sẵn.

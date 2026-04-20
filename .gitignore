@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+.idea/
+build/
+dist/
+build_deps/
+*.egg-info/
+*.spec.bak
+uv.lock
+*_gen_from_scan.txt
+*_gen_from_scan.docx

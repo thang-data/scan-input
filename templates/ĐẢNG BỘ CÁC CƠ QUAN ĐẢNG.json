@@ -1,0 +1,22 @@
+{
+  "name": "ĐẢNG BỘ CÁC CƠ QUAN ĐẢNG",
+  "description": "",
+  "fields": [
+    {
+      "key": "tên đảng",
+      "formula_type": "AFTER",
+      "anchor1": "PHÓ BÍ THƯ - Lưu Đảng ủy",
+      "anchor2": "PHÓ BÍ THƯ - Lưu Đảng ủy",
+      "strip": true
+    },
+    {
+      "key": "số điện thoại",
+      "formula_type": "BETWEEN",
+      "anchor1": ", số điện thoại",
+      "anchor2": ")",
+      "strip": true
+    }
+  ],
+  "created_at": "2026-04-20T17:18:23.705775",
+  "_type": "formula"
+}
