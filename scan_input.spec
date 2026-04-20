@@ -60,21 +60,19 @@ a = Analysis(
 
 # Add Tesseract binaries if available
 if os.path.isdir(TESSERACT_DIR):
-    tesseract_files = []
     for root, dirs, files in os.walk(TESSERACT_DIR):
         for f in files:
             src = os.path.join(root, f)
             rel = os.path.relpath(root, TESSERACT_DIR)
             dst = os.path.join("tesseract", rel)
-            tesseract_files.append((src, dst))
-    a.datas += tesseract_files
+            a.datas.append((src, dst, "DATA"))
 
 # Add Poppler binaries if available
 if os.path.isdir(POPPLER_DIR):
     for f in os.listdir(POPPLER_DIR):
         src = os.path.join(POPPLER_DIR, f)
         if os.path.isfile(src):
-            a.binaries.append((src, "poppler"))
+            a.datas.append((src, "poppler", "DATA"))
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
